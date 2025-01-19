@@ -1,28 +1,20 @@
 use extism_pdk::*;
 use serde::{Deserialize, Serialize};
 
-// start with something simple
-#[plugin_fn]
-pub fn greet(name: String) -> FnResult<String> {
-    Ok(format!("Hello, {}!", name))
-}
-
-// use json data for inputs and outputs
-#[derive(FromBytes, Deserialize, PartialEq, Debug)]
+#[derive(FromBytes, ToBytes, Deserialize, Serialize, PartialEq, Debug)]
 #[encoding(Json)]
-struct Add {
-    left: i32,
-    right: i32,
-}
-#[derive(ToBytes, Serialize, PartialEq, Debug)]
-#[encoding(Json)]
-struct Sum {
-    value: i32,
+struct Data {
+    name: String,
+    age: i32,
+    happy: bool,
 }
 
 #[plugin_fn]
-pub fn add(input: Add) -> FnResult<Sum> {
-    Ok(Sum {
-        value: input.left + input.right,
+pub fn redact(input: Data) -> FnResult<Data> {
+    let redact = config::get("redact").expect("redact not found");
+    Ok(Data {
+        name: redact.unwrap(),
+        age: input.age,
+        happy: input.happy,
     })
 }
