@@ -38,7 +38,7 @@ pub fn call(input: Input) -> FnResult<Output> {
     info!("Hello from Plugin!");
     let redact = config::get("redact").expect("redact not found");
     Ok(Output {
-        name: format!("New value: {}", redact.unwrap()),
+        name: format!("Redacted: {}", redact.unwrap()),
         age: input.age,
         happy: input.happy,
         fact: fact()?,
