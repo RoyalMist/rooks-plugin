@@ -1,12 +1,9 @@
 use extism_pdk::*;
 use serde::{Deserialize, Serialize};
 
-fn fact() -> FnResult<String> {
+fn fact() -> Result<String, Error> {
     #[derive(Serialize, Deserialize)]
     struct Fact {
-        pub icon_url: String,
-        pub id: String,
-        pub url: String,
         pub value: String,
     }
 
@@ -37,10 +34,13 @@ struct Output {
 pub fn call(input: Input) -> FnResult<Output> {
     info!("Hello from Plugin!");
     let redact = config::get("redact").expect("redact not found");
-    Ok(Output {
-        name: format!("Redacted: {}", redact.unwrap()),
-        age: input.age,
-        happy: input.happy,
-        fact: fact()?,
-    })
+    match fact() {
+        Ok(fact) => Ok(Output {
+            name: format!("Redacted: {}", redact.unwrap()),
+            age: input.age,
+            happy: input.happy,
+            fact,
+        }),
+        Err(err) => Err(WithReturnCode::new(err, 1)),
+    }
 }
