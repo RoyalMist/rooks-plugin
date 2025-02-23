@@ -34,13 +34,14 @@ struct Output {
 pub fn call(input: Input) -> FnResult<Output> {
     info!("Hello from Plugin!");
     let redact = config::get("redact")?;
-    match (redact, fact()) {
-        (Ok(fact), Some(redact)) => Ok(Output {
-            name: format!("--{}--", redact),
+    let name = redact.unwrap_or("X".to_string());
+    match fact() {
+        (Ok(fact)) => Ok(Output {
+            name: format!("--{}--", name),
             age: input.age,
             happy: input.happy,
             fact,
         }),
-        (Err(err), _) => Err(WithReturnCode::new(err, 1)),
+        Err(err) => Err(WithReturnCode::new(err, 1)),
     }
 }
