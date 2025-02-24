@@ -36,7 +36,7 @@ pub fn call(input: Input) -> FnResult<Output> {
     let redact = config::get("redact")?;
     let name = redact.unwrap_or("X".to_string());
     match fact() {
-        (Ok(fact)) => Ok(Output {
+        Ok(fact) => Ok(Output {
             name: format!("--{}--", name),
             age: input.age,
             happy: input.happy,
